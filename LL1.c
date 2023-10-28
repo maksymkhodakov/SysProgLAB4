@@ -160,3 +160,48 @@ void inputGrammar(struct Rules ** p) {
         return temp;
     }
 }
+
+Rules * removeRecursion(Rules * p) {
+    Rules * no_rec = NULL;
+    Rules * iterator = p;
+    while (iterator != NULL) {
+        if (checkForRecursion(iterator)) {
+            Rules * temp = malloc(sizeof(Rules));
+            Rules * temp2 = malloc(sizeof(Rules));
+
+            strcpy(temp->name,iterator->name);
+            strcpy(temp2->name,iterator->name);
+            strcat(temp2->name,"'");
+
+            int k = 0;
+            int l = 0;
+            for (int i = 0; i < iterator->count; ++i) {
+                if (iterator->production[i][0] != iterator->name[0]) {
+                    strcpy(temp->production[k],iterator->production[i]);
+                    strcat(temp->production[k],temp2->name);
+                    ++k;
+                } else {
+                    char* help = substring(iterator->production[i],1,strlen(iterator->production[i]));
+                    strcpy(temp2->production[l],help);
+                    strcat(temp2->production[l],temp2->name);
+                    ++l;
+                }
+            }
+            if (k == 0) {
+                strcpy(temp->production[0],temp2->name);
+                k++;
+            }
+            temp->count = k;
+            strcpy(temp2->production[l],"&");
+            temp2->count = l+1;
+            insert(&no_rec,temp);
+            insert(&no_rec,temp2);
+        } else {
+            Rules * temp = malloc(sizeof(Rules));
+            *temp = * iterator;
+            insert(&no_rec,temp);
+        }
+        iterator = iterator->next;
+    }
+    return no_rec;
+}
