@@ -338,6 +338,7 @@ void printFirst(Rules* p){
         printf("}\n");
         p = p->next;
     }
+
 }
 
 Rules* followForOneRule(Rules* p, Rules* p2, Rules* h) {
@@ -467,7 +468,18 @@ int find(Rules* p, Rules* h, char c) {
     }
     return 0;
 }
-
+void insertLL1(LL1 ** table,LL1 * temp){
+    temp->next = NULL;
+    if (*table == NULL) {
+        *table = temp;
+    } else {
+        LL1 * x = (*table);
+        while (x->next != NULL) {
+            x = x->next;
+        }
+        x->next = temp;
+    }
+}
 LL1 * generateLL1Table(Rules * p, Rules * h){
     LL1 * table = NULL;
     while (p!=NULL) {
@@ -499,4 +511,28 @@ void printLL1(LL1 * l) {
         printf("( %s,%c ) -> %s \n", l->nonTerminal, l->terminal, l->result);
         l = l->next;
     }
+}
+void push(struct Stack ** p, char * x ){
+    struct Stack * temp = malloc(sizeof(Stack));
+    strcpy(temp->value,x);
+    if (*p == NULL) {
+        temp->next = NULL;
+        *p = temp;
+    } else {
+        temp->next = *p;
+        (*p)= temp;
+    }
+}
+
+void pop(Stack **p) {
+    Stack * temp = *p;
+    (*p) = (*p)->next;
+    free(temp);
+}
+
+char* peek(Stack * p) {
+    if (p != NULL) {
+        return p->value;
+    }
+    return NULL;
 }
