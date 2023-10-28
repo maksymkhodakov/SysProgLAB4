@@ -1,0 +1,52 @@
+Test grammar1:
+E->E+T|T
+T->T*F|F
+F->(E)|a
+T->&
+
+valid cases:
+a+a
+a+a*a
+a*a+(a+a*a+(a*a+a))
+((((((((((a+a*(a+a*(a*(a*a)))))))))))))
+
+invalid cases:
+a+b
++a
+a+a*+
+(a+a
+
+Test grammar2:
+E->E-M|M
+M->M/T|T
+T->(E)|a
+M->&
+
+valid cases:
+a-a
+a/a
+a/a/a/a/a/a-a-a-a-a-a-a-a-a-a-a
+a-------------------------------------
+a/a---
+
+invalid cases:
+a/
+/a
+-a
+a/b-
+
+Test grammar3:
+E->aXa
+X->!!X|77X|&
+
+valid cases:
+a!!a
+a!!!!a
+a!!77a
+a77a
+a77!!77!!!!777777a
+
+invalid cases:
+a7
+a!a
+a7!a
