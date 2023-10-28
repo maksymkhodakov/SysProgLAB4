@@ -3,5 +3,4 @@ project(SysProgLAB4 C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(SysProgLAB4
-        LL1.c)
+add_executable(SysProgLAB4 LL1.c)

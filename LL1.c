@@ -196,12 +196,12 @@ Rules * removeRecursion(Rules * p) {
             temp->count = k;
             strcpy(temp2->production[l],"&");
             temp2->count = l+1;
-            insert(&no_rec,temp);
-            insert(&no_rec,temp2);
+            insertDefaultValues(&no_rec,temp);
+            insertDefaultValues(&no_rec,temp2);
         } else {
             Rules * temp = malloc(sizeof(Rules));
             *temp = * iterator;
-            insert(&no_rec,temp);
+            insertDefaultValues(&no_rec,temp);
         }
         iterator = iterator->next;
     }
@@ -600,4 +600,49 @@ int checkIfValid(LL1 * table , char * text, Rules * prod){
         }
     }
     return strlen(text);
+}
+
+int main(){
+    char text[WORD];
+    Rules * productions = NULL;
+    Rules * productionsNoRecursion = NULL;
+    LL1 * table = NULL;
+
+    printf("Enter grammar: \n");
+    inputGrammar(&productions);
+    printf("\n");
+    printAllRules(productions);
+    productionsNoRecursion = removeRecursion(productions);
+    printf("\n");
+    printAllRules(productionsNoRecursion);
+    productionsNoRecursion->follow[0] ='$';
+    productionsNoRecursion->follow[1] = '\0';
+    productionsNoRecursion->followCounter = 1;
+    productionsNoRecursion = first(productionsNoRecursion);
+    printFirst(productionsNoRecursion);
+    productionsNoRecursion = follow(productionsNoRecursion);
+    printf("\n");
+    printFollow(productionsNoRecursion);
+    table = generateLL1Table(productionsNoRecursion, productionsNoRecursion);
+    printf("\n");
+    printf("------ LL1 table ------ \n");
+
+    printLL1(table);
+
+    while (1) {
+        printf("Enter a word for verification \n");
+        scanf("%s",text);
+        if (strcmp(text,".") == 0)
+            break;
+
+        int verificationCode = checkIfValid(table, text, productionsNoRecursion);
+        if (verificationCode == -1) {
+            printf("\033[0;34m %s accepted \n", text);
+            printf("\033[0;33m");
+        } else {
+            printf("\033[0;31m %s rejected by syntax error at symbol: %d \n", text, verificationCode + 1);
+            printf("\033[0;33m");
+        }
+    }
+    return 0;
 }
