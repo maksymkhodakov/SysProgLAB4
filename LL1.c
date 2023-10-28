@@ -72,16 +72,15 @@ char * substring(const char * string, int begin, int num){
     return res;
 }
 
-void inputGrammar(struct Rules ** p){
-    char * allRules = malloc(NUMBER_OF_RULES * sizeof(char));
-    char * token;
-    struct Rules * temp;
+void inputGrammar(struct Rules ** p) {
+    char *allRules = malloc(NUMBER_OF_RULES * sizeof(char));
+    char *token;
+    struct Rules *temp;
     int k = 0;
-    while(1) {
-        scanf("%s",allRules);
-
+    while (1) {
+        scanf("%s", allRules);
         // is used to finished rules input
-        if (strcmp(allRules, ".") == 0){
+        if (strcmp(allRules, ".") == 0) {
             return;
         }
 
@@ -89,18 +88,18 @@ void inputGrammar(struct Rules ** p){
         temp->name[0] = allRules[0];
         temp->name[1] = '\0';
 
-        char *help = substring(allRules,3,strlen(allRules) - 3);
-        token = strtok(help,"|");
+        char *help = substring(allRules, 3, strlen(allRules) - 3);
+        token = strtok(help, "|");
 
         while (token != NULL) {
-            strcpy(temp->production[k],token);
+            strcpy(temp->production[k], token);
             int len = strlen(temp->production[k]);
             temp->production[k][len] = '\0';
             ++k;
-            token = strtok(NULL,"|");
+            token = strtok(NULL, "|");
         }
         temp->count = k;
-        k=0;
+        k = 0;
 
         if (*p == NULL) {
             temp->next = NULL;
@@ -108,14 +107,56 @@ void inputGrammar(struct Rules ** p){
             temp->followCalculator = 0;
             *p = temp;
         } else {
-            Rules * x = (*p);
-            while(x->next != NULL){
-                x =x->next;
+            Rules *x = (*p);
+            while (x->next != NULL) {
+                x = x->next;
             }
             x->next = temp;
             temp->firstCalculator = 0;
             temp->followCalculator = 0;
             temp->next = NULL;
         }
+    }
+    void printAllRules(Rules *p) {
+        while (p != NULL) {
+            printf("%s->", p->name);
+            for (int i = 0; i < p->count; ++i) {
+                printf("%s", p->production[i]);
+                if (i < p->count - 1) {
+                    printf("|");
+                }
+            }
+            p = p->next;
+            printf("\n");
+        }
+    }
+
+    int checkForRecursion(Rules *p) {
+        for (int i = 0; i < p->count; ++i) {
+            if (p->name[0] == p->production[i][0]) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    char *removeDuplicated(char table[]) {
+        char *temp;
+        int k = 0;
+        temp = malloc(strlen(table));
+        for (int i = 0; i < strlen(table); ++i) {
+            int exist = 0;
+            for (int j = i + 1; j < strlen(table); ++j) {
+                if (table[i] == table[j]) {
+                    exist = 1;
+                }
+            }
+            if (exist == 0) {
+                temp[k] = table[i];
+                ++k;
+            }
+        }
+        temp[k] = '\0';
+        return temp;
     }
 }
