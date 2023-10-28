@@ -467,3 +467,36 @@ int find(Rules* p, Rules* h, char c) {
     }
     return 0;
 }
+
+LL1 * generateLL1Table(Rules * p, Rules * h){
+    LL1 * table = NULL;
+    while (p!=NULL) {
+        for (int i = 0; i < p->firstCounter; ++i) {
+            if (p->first[i] == '&') {
+                for (int j = 0; j < p->followCounter; ++j) {
+                    LL1 * temp = malloc(sizeof(LL1));
+                    temp->result[0] ='&';
+                    strcpy(temp->nonTerminal, p->name);
+                    temp->terminal = p->follow[j];
+                    insertLL1(&table,temp);
+                }
+            } else {
+                int k= find(p,h,p->first[i]);
+                LL1 * temp = malloc(sizeof(LL1));
+                strcpy(temp->result ,p->production[k]);
+                strcpy(temp->nonTerminal, p->name);
+                temp->terminal = p->first[i];
+                insertLL1(&table,temp);
+            }
+        }
+        p = p->next;
+    }
+    return table;
+}
+
+void printLL1(LL1 * l) {
+    while (l!= NULL) {
+        printf("( %s,%c ) -> %s \n", l->nonTerminal, l->terminal, l->result);
+        l = l->next;
+    }
+}
