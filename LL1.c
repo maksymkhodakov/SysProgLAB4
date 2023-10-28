@@ -339,3 +339,96 @@ void printFirst(Rules* p){
         p = p->next;
     }
 }
+
+Rules* followForOneRule(Rules* p, Rules* p2, Rules* h) {
+    if (p->followCalculator == 0){
+        p->followCalculator = 1;
+        while (p2 != NULL) {
+            int max = p2->count;
+            for (int i = 0; i < max; ++i) {
+                int d = checkIfNameExist(p2->production[i],p->name);
+                if (d == 0) {
+                    continue;
+                }
+                if (p2->production[i][d] == '\0') {
+                    if (strcmp(p->name,p2->name)!=0) {
+                        if(!isupper(p2->production[i][d-1]) && p2->production[i][d-1] != '\'' ) {
+                            p->follow[p->followCounter] = p2->production[i][d - 1];
+                            p->followCounter++;
+                        } else {
+                            Rules * temp  = followForOneRule(p2, h, h);
+                            if (p->follow[0] == '\0')
+                                strcpy(p->follow,temp->follow);
+                            else
+                                strcat(p->follow,temp->follow);
+                            p->followCounter = p->followCounter + strlen(temp->follow);
+                        }
+                    }
+                } else {
+                    while (d < strlen(p2->production[i])) {
+                        if (isupper(p2->production[i][d])) {
+                            Rules *temp;
+                            if (p2->production[i][d + 1] == '\'') {
+                                char x[3];
+                                x[0] = p2->production[i][d];
+                                x[1] = '\'';
+                                temp = nameToRule(h, x);
+                                d = d + 2;
+                            } else {
+                                temp = getRuleByName(h, p2->production[i][d]);
+                                d++;
+                            }
+                            if (epsilonExists(temp->first)) {
+                                strcat(p->follow, temp->first);
+                                strcpy(p->follow, removeEpsilon(p->follow));
+                                p->followCounter = p->followCounter + temp->firstCounter - 1;
+                                if (p2->production[i][d] == '\0' && strcmp(temp->name, p2->name) != 0) {
+                                    strcat(p->follow, p2->follow);
+                                    p->followCounter = p->followCounter + strlen(p2->follow);
+                                }
+                            } else {
+                                strcat(p->follow, temp->first);
+                                p->followCounter = p->followCounter + temp->firstCounter;
+                                break;
+                            }
+                        } else {
+                            p->follow[p->followCounter] = p2->production[i][d];
+                            p->followCounter++;
+                            p->follow[p->followCounter] = '\0';
+                            break;
+                        }
+                    }
+                }
+            }
+            p2 = p2->next;
+        }
+        strcpy(p->follow,removeDuplicated(p->follow));
+        p->followCounter = strlen(p->follow);
+        return p;
+    }
+    return p;
+}
+
+Rules * follow(Rules * p){
+    Rules * iterator = p;
+    while(iterator!=NULL){
+        iterator = followForOneRule(iterator,p,p);
+        iterator = iterator->next;
+    }
+    return p;
+}
+
+void printFollow(Rules * p){
+    while (p !=NULL) {
+        printf("follow(%s) = {",p->name);
+        for (int i = 0; i < p->followCounter; ++i) {
+            if (i == p->followCounter - 1) {
+                printf("%c",p->follow[i]);
+            } else {
+                printf("%c,",p->follow[i]);
+            }
+        }
+        printf("}\n");
+        p = p->next;
+    }
+}
