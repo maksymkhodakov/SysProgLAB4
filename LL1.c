@@ -34,3 +34,40 @@ struct Stack{
     char value[3];
     struct Stack * next;
 };
+
+void insertDefaultValues(struct Rules ** p, struct Rules * temp){
+    if (*p == NULL) {
+        temp->next = NULL;
+        temp->firstCounter = 0;
+        temp->followCounter = 0;
+        temp->firstCalculator = 0;
+        temp->followCalculator = 0;
+        temp->first[0] = '\0';
+        temp->follow[0] = '\0';
+        *p = temp;
+    } else {
+        struct Rules * x = (*p);
+        while(x->next != NULL){
+            x = x->next;
+        }
+        x->next = temp;
+        temp->firstCounter = 0;
+        temp->firstCalculator = 0;
+        temp->followCalculator =0;
+        temp->followCounter = 0;
+        temp->first[0] = '\0';
+        temp->follow[0] = '\0';
+        temp->next = NULL;
+    }
+}
+char * substring(const char * string, int begin, int num){
+    char * res;
+    int j = 0;
+    res = malloc((num)*sizeof(char));
+    for (int i = begin; i < begin+num; ++i) {
+        res[j] = string[i];
+        j++;
+    }
+    res[num] = '\0';
+    return res;
+}
