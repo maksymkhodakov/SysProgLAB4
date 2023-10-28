@@ -205,3 +205,68 @@ Rules * removeRecursion(Rules * p) {
     }
     return no_rec;
 }
+
+Rules * getRuleByName(Rules * p, char name){
+    while (p != NULL) {
+        if (p->name[0] == name && p->name[1] != '\'') {
+            return p;
+        }
+        p = p->next;
+    }
+    printf("Rule %c does not exist",name);
+    exit(0);
+}
+
+int epsilonExists(char first[]){
+    for (int i = 0; i < strlen(first); ++i) {
+        if (first[i] == '&') {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+char* removeEpsilon(char * first){
+    int l = 0;
+    for (int i = 0; i < strlen(first); ++i) {
+        if (first[i] == '&') {
+            l++;
+        }
+    }
+    char * temp = malloc(strlen(first));
+    l = 0;
+    for (int i = 0; i < strlen(first); ++i) {
+        if (first[i] != '&') {
+            temp[l] = first[i];
+            l++;
+        }
+    }
+    temp[l] = '\0';
+    return temp;
+}
+
+int checkIfExist(char first[], char pr){
+    int i = 0;
+    while (i < strlen(first)) {
+        if (first[i] == pr) {
+            return 1;
+        }
+        i++;
+    }
+    return 0;
+}
+
+int checkIfNameExist(char production[], char name[]) {
+    if (strlen(name) == 2) {
+        for (int i = 0; i < strlen(production)-1; ++i) {
+            if (name[0] == production[i] && name[1] == production[i+1])
+                return i+2;
+        }
+    } else {
+        for (int i = 0; i < strlen(production); ++i) {
+            if (name[0] == production[i] && production[i+1] != '\'')
+                return i+1;
+        }
+    }
+    return 0;
+}
