@@ -117,6 +117,8 @@ void inputGrammar(struct Rules ** p) {
             temp->next = NULL;
         }
     }
+}
+
     void printAllRules(Rules *p) {
         while (p != NULL) {
             printf("%s->", p->name);
@@ -159,7 +161,7 @@ void inputGrammar(struct Rules ** p) {
         temp[k] = '\0';
         return temp;
     }
-}
+
 
 Rules * removeRecursion(Rules * p) {
     Rules * no_rec = NULL;
@@ -269,4 +271,71 @@ int checkIfNameExist(char production[], char name[]) {
         }
     }
     return 0;
+}
+
+Rules* firstForOneRule(Rules * p, Rules * p2) {
+    if (p->firstCalculator == 0) {
+        int k =0;
+        int max = p->count;
+        for (int i = 0; i < max; ++i) {
+            int l =0;
+            if (isupper(p->production[i][l])) {
+                Rules * x = getRuleByName(p2, p->production[i][l]);
+                Rules * temp = firstForOneRule(x, p2);
+                strcat(p->first,temp->first);
+                while(epsilonExists(temp->first) && isupper(p->production[i][l + 1])) {
+                    l++;
+                    Rules * y = getRuleByName(p2, p->production[i][l]);
+                    Rules * temp2 = firstForOneRule(y, p2);
+                    strcat(p->first,temp2->first);
+                }
+                strcpy(p->first,removeEpsilon(p->first));
+                strcpy(p->first,removeDuplicated(p->first));
+            } else {
+                if (!checkIfExist(p->first,p->production[i][0])) {
+                    p->first[k] = p->production[i][0];
+                    ++k;
+                    p->first[k] = '\0';
+                }
+            }
+        }
+        p->firstCounter = strlen(p->first);
+        p->firstCalculator =1;
+        return p;
+    }
+    return p;
+}
+
+Rules* first(Rules* p ) {
+    Rules * iterator = p;
+    while(iterator!=NULL){
+        iterator = firstForOneRule(iterator,p);
+        iterator = iterator->next;
+    }
+    return p;
+}
+
+Rules* nameToRule(Rules* p , char* name){
+    while (p != NULL) {
+        if (strcmp(name,p->name) == 0) {
+            return p;
+        }
+        p = p->next;
+    }
+    return NULL;
+}
+
+void printFirst(Rules* p){
+    while (p != NULL) {
+        printf("first(%s) = {",p->name);
+        for (int i = 0; i < p->firstCounter; ++i) {
+            if (i == p->firstCounter - 1) {
+                printf("%c",p->first[i]);
+            } else {
+                printf("%c,",p->first[i]);
+            }
+        }
+        printf("}\n");
+        p = p->next;
+    }
 }
