@@ -432,3 +432,38 @@ void printFollow(Rules * p){
         p = p->next;
     }
 }
+
+int find(Rules* p, Rules* h, char c) {
+    for (int i = 0; i < p->count; ++i) {
+        int j = 0;
+        while (j < strlen(p->production[i])) {
+            if (p->production[i][j] == c){
+                return i;
+            }
+            if (isupper(p->production[i][j])){
+                int k;
+                if (p->production[i][j+1] != '\''){
+                    k = find(getRuleByName(h, p->production[i][j]), h, c);
+                    ++j;
+                } else {
+                    char x[3];
+                    x[0] = p->production[i][j];
+                    x[1] = '\'';
+                    k  = find(nameToRule(h,x),h,c);
+                    j = j+2;
+                }
+                if (k == 2) {
+                    continue;
+                } else {
+                    return i;
+                }
+            } else if(p->production[i][j] == c){
+                return 1;
+            } else if(p->production[i][j] == '&'){
+                return 2;
+            }
+            break;
+        }
+    }
+    return 0;
+}

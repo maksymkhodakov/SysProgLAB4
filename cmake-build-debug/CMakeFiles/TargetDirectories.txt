@@ -1,3 +1,3 @@
-C:/CLion Projects/SysProgLAB4/cmake-build-debug/CMakeFiles/SysProgLAB4.dir
-C:/CLion Projects/SysProgLAB4/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/CLion Projects/SysProgLAB4/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/bogda/CLionProjects/SysProgLAB4/cmake-build-debug/CMakeFiles/SysProgLAB4.dir
+C:/Users/bogda/CLionProjects/SysProgLAB4/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/bogda/CLionProjects/SysProgLAB4/cmake-build-debug/CMakeFiles/rebuild_cache.dir
