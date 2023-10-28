@@ -71,3 +71,51 @@ char * substring(const char * string, int begin, int num){
     res[num] = '\0';
     return res;
 }
+
+void inputGrammar(struct Rules ** p){
+    char * allRules = malloc(NUMBER_OF_RULES * sizeof(char));
+    char * token;
+    struct Rules * temp;
+    int k = 0;
+    while(1) {
+        scanf("%s",allRules);
+
+        // is used to finished rules input
+        if (strcmp(allRules, ".") == 0){
+            return;
+        }
+
+        temp = malloc(sizeof(Rules));
+        temp->name[0] = allRules[0];
+        temp->name[1] = '\0';
+
+        char *help = substring(allRules,3,strlen(allRules) - 3);
+        token = strtok(help,"|");
+
+        while (token != NULL) {
+            strcpy(temp->production[k],token);
+            int len = strlen(temp->production[k]);
+            temp->production[k][len] = '\0';
+            ++k;
+            token = strtok(NULL,"|");
+        }
+        temp->count = k;
+        k=0;
+
+        if (*p == NULL) {
+            temp->next = NULL;
+            temp->firstCalculator = 0;
+            temp->followCalculator = 0;
+            *p = temp;
+        } else {
+            Rules * x = (*p);
+            while(x->next != NULL){
+                x =x->next;
+            }
+            x->next = temp;
+            temp->firstCalculator = 0;
+            temp->followCalculator = 0;
+            temp->next = NULL;
+        }
+    }
+}
